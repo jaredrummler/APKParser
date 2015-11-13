@@ -94,4 +94,9 @@ public class ResourceEntry {
     this.value = value;
   }
 
+  @Override public String toString() {
+    return "ResourceEntry{" + "size=" + size + ", flags=" + flags + ", key='" + key + '\'' +
+        ", value=" + value + '}';
+  }
+
 }

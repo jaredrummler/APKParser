@@ -66,4 +66,7 @@ public class TypeSpec {
     this.id = id;
   }
 
+  @Override public String toString() {
+    return "TypeSpec{" + "name='" + name + '\'' + ", id=" + id + '}';
+  }
 }

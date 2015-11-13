@@ -28,6 +28,7 @@
 
 package com.jaredrummler.apkparser.struct.resource;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 public class ResourceMapEntry extends ResourceEntry {
@@ -77,6 +78,14 @@ public class ResourceMapEntry extends ResourceEntry {
       return resourceTableMaps[0].toString();
     }
     return null;
+  }
+
+  @Override public String toString() {
+    return "ResourceMapEntry{" +
+        "parent=" + parent +
+        ", count=" + count +
+        ", resourceTableMaps=" + Arrays.toString(resourceTableMaps) +
+        '}';
   }
 
 }

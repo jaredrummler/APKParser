@@ -89,6 +89,11 @@ public class CertificateMeta {
     this.certMd5 = builder.certMd5;
   }
 
+  @Override public String toString() {
+    return "signAlgorithm:\t" + signAlgorithm + '\n' + "certBase64Md5:\t" + certBase64Md5 + '\n' +
+        "certMd5:\t" + certMd5;
+  }
+
   public static final class Builder {
 
     private String signAlgorithm;

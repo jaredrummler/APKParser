@@ -39,4 +39,8 @@ public class GlEsVersion {
     this.minor = minor;
     this.required = required;
   }
+
+  @Override public String toString() {
+    return this.major + "." + this.minor;
+  }
 }

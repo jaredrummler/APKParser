@@ -58,4 +58,15 @@ public class XmlNodeStartTag {
     this.attributes = attributes;
   }
 
+  @Override public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append('<');
+    if (namespace != null) {
+      sb.append(namespace).append(":");
+    }
+    sb.append(name);
+    sb.append('>');
+    return sb.toString();
+  }
+
 }

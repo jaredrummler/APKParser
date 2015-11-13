@@ -82,4 +82,8 @@ public class ResourceEntity {
     return value;
   }
 
+  @Override public String toString() {
+    return "ResourceEntity{" + "resourceId=" + resourceId + ", value='" + value + '\'' + '}';
+  }
+
 }

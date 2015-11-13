@@ -63,6 +63,10 @@ public class ResourceTableMap {
     this.data = data;
   }
 
+  @Override public String toString() {
+    return data;
+  }
+
   public static class MapAttr {
 
     public static final int TYPE = 0x01000000 | (0 & 0xFFFF);

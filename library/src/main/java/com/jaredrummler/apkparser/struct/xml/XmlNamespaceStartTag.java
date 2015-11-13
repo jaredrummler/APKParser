@@ -49,4 +49,8 @@ public class XmlNamespaceStartTag {
     this.uri = uri;
   }
 
+  @Override public String toString() {
+    return prefix + "=" + uri;
+  }
+
 }

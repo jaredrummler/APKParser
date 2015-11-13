@@ -88,6 +88,10 @@ public class DexClass {
     return (accessFlags & DexClassStruct.ACC_STATIC) != 0;
   }
 
+  @Override public String toString() {
+    return classType;
+  }
+
   public static final class Builder {
 
     private String classType;

@@ -86,6 +86,11 @@ public class ResValue {
     this.data = data;
   }
 
+  @Override public String toString() {
+    return "ResValue{" + "size=" + size + ", res0=" + res0 + ", dataType=" + dataType + ", data=" +
+        data + '}';
+  }
+
   public static class ResType {
 
     // Contains no data.

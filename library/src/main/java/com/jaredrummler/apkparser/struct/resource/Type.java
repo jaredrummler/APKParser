@@ -171,4 +171,8 @@ public class Type {
     this.stringPool = stringPool;
   }
 
+  @Override public String toString() {
+    return "Type{" + "name='" + name + '\'' + ", id=" + id + ", locale=" + locale + '}';
+  }
+
 }

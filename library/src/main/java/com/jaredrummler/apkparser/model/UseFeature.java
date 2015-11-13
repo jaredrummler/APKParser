@@ -37,4 +37,8 @@ public class UseFeature {
     this.name = name;
     this.required = required;
   }
+
+  @Override public String toString() {
+    return this.name;
+  }
 }

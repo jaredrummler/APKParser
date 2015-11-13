@@ -49,4 +49,8 @@ public class XmlNamespaceEndTag {
     this.uri = uri;
   }
 
+  @Override public String toString() {
+    return prefix + "=" + uri;
+  }
+
 }

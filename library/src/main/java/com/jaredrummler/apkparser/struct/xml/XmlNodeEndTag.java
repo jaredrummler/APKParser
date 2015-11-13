@@ -49,4 +49,14 @@ public class XmlNodeEndTag {
     this.name = name;
   }
 
+  @Override public String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("</");
+    if (namespace != null) {
+      sb.append(namespace).append(":");
+    }
+    sb.append(name).append('>');
+    return sb.toString();
+  }
+
 }
