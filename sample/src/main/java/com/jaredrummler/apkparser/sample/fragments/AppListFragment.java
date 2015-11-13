@@ -21,30 +21,20 @@ import android.app.ListFragment;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.jaredrummler.apkparser.sample.R;
 import com.jaredrummler.apkparser.sample.activities.AndroidManifestActivity;
+import com.jaredrummler.apkparser.sample.adapters.AppListAdapter;
 import com.jaredrummler.apkparser.sample.util.AppNames;
-import com.jaredrummler.apkparser.sample.util.Density;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import static com.jaredrummler.apkparser.sample.picasso.AppIconRequestHandler.SCHEME_PNAME;
 
 public class AppListFragment extends ListFragment implements AdapterView.OnItemClickListener {
 
@@ -92,60 +82,14 @@ public class AppListFragment extends ListFragment implements AdapterView.OnItemC
       return installedPackages;
     }
 
-    @Override protected void onPostExecute(List<PackageInfo> packageInfos) {
-      setListAdapter(new Adapter(packageInfos));
+    @Override protected void onPostExecute(List<PackageInfo> apps) {
+      setListAdapter(new AppListAdapter(getActivity(), apps));
       getListView().setFastScrollEnabled(true);
       if (listState != null) {
         getListView().onRestoreInstanceState(listState);
         listState = null;
       }
     }
-  }
-
-  private final class Adapter extends BaseAdapter {
-
-    private final List<PackageInfo> packageInfos;
-    private final LayoutInflater inflater;
-    private final PackageManager pm;
-    private final Picasso picasso;
-    private final int size;
-
-    private Adapter(List<PackageInfo> packageInfos) {
-      this.packageInfos = packageInfos;
-      this.inflater = LayoutInflater.from(getActivity());
-      this.picasso = Picasso.with(getActivity());
-      this.size = Density.toPx(getActivity(), 46);
-      this.pm = getActivity().getPackageManager();
-    }
-
-    @Override public int getCount() {
-      return packageInfos.size();
-    }
-
-    @Override public PackageInfo getItem(int position) {
-      return packageInfos.get(position);
-    }
-
-    @Override public long getItemId(int position) {
-      return position;
-    }
-
-    @Override public View getView(int position, View convertView, ViewGroup parent) {
-      if (convertView == null) {
-        convertView = inflater.inflate(R.layout.list_item_app, parent, false);
-      }
-      ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView);
-      TextView textView = (TextView) convertView.findViewById(R.id.textView);
-      PackageInfo packageInfo = getItem(position);
-      textView.setText(AppNames.getLabel(pm, packageInfo));
-      picasso.load(Uri.parse(SCHEME_PNAME + ":" + packageInfo.packageName))
-          .placeholder(android.R.drawable.sym_def_app_icon)
-          .resize(size, size)
-          .centerInside()
-          .into(imageView);
-      return convertView;
-    }
-
   }
 
 }
