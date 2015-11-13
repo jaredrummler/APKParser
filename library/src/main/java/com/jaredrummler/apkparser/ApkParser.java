@@ -31,6 +31,7 @@ package com.jaredrummler.apkparser;
 import android.content.pm.ApplicationInfo;
 
 import com.jaredrummler.apkparser.exception.ParserException;
+import com.jaredrummler.apkparser.model.AndroidManifest;
 import com.jaredrummler.apkparser.model.ApkMeta;
 import com.jaredrummler.apkparser.model.CertificateMeta;
 import com.jaredrummler.apkparser.model.DexClass;
@@ -81,6 +82,7 @@ public class ApkParser implements Closeable {
 
   private DexClass[] dexClasses;
   private ResourceTable resourceTable;
+  private AndroidManifest androidManifest;
   private String manifestXml;
   private ApkMeta apkMeta;
   private Set<Locale> locales;
@@ -106,6 +108,20 @@ public class ApkParser implements Closeable {
       parseManifestXml();
     }
     return manifestXml;
+  }
+
+  /**
+   * @return Object holding information about the AndroidManifest and it's declared activities,
+   * services, receivers, intent-filters, etc.
+   * @throws IOException
+   *     if parsing the AndroidManifest failed.
+   */
+  public AndroidManifest getAndroidManifest() throws IOException {
+    if (androidManifest == null) {
+      // TODO: clean up. We are parsing XML twice.
+      androidManifest = new AndroidManifest(getApkMeta(), manifestXml);
+    }
+    return androidManifest;
   }
 
   /**
