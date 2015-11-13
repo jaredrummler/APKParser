@@ -56,6 +56,7 @@ public class AndroidManifestActivity extends AppCompatActivity {
 
     String title = AppNames.getLabel(getPackageManager(), packageInfo);
     getSupportActionBar().setTitle(title);
+    getSupportActionBar().setSubtitle("AndroidManifest.xml");
 
     apkParser = ApkParser.create(packageInfo.applicationInfo);
 
@@ -97,10 +98,13 @@ public class AndroidManifestActivity extends AppCompatActivity {
     new Thread(new Runnable() {
 
       @Override public void run() {
-        try {
-          sourceCodeText = Html.escapeHtml(apkParser.getManifestXml());
-        } catch (IOException e) {
-          e.printStackTrace();
+        if (sourceCodeText == null) {
+          try {
+            sourceCodeText = Html.escapeHtml(apkParser.getManifestXml());
+            apkParser.close();
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
         }
 
         runOnUiThread(new Runnable() {
