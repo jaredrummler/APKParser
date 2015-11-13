@@ -17,7 +17,7 @@ ApkMeta contains name(label), packageName, version, sdk, used features, etc.
 ```java
 PackageManager pm = getPackageManager();
 ApplicationInfo appInfo = pm.getApplicationInfo("com.facebook.katana", 0);
-ApkParser apkParser = new ApkParser(appInfo.sourceDir);
+ApkParser apkParser = ApkParser.create(appInfo);
 ApkMeta meta = apkParser.getApkMeta();
 String packageName = meta.packageName;
 long versionCode = meta.versionCode;
@@ -27,14 +27,14 @@ List<String> requestedPermissions = meta.usesPermissions;
 #####2. Get binary xml and manifest xml file
 ```java
 ApplicationInfo appInfo = getPackageManager().getApplicationInfo("some.package.name", 0);
-ApkParser apkParser = new ApkParser(appInfo.sourceDir);
+ApkParser apkParser = ApkParser.create(appInfo);
 String readableAndroidManifest = apkParser.getManifestXml();
 String xml = apkParser.transBinaryXml("res/layout/activity_main.xml");
 ```
 #####3. Get dex classes
 ```java
 ApplicationInfo appInfo = getPackageManager().getApplicationInfo("com.instagram.android", 0);
-ApkParser apkParser = new ApkParser(appInfo.sourceDir);
+ApkParser apkParser = ApkParser.create(appInfo);
 for (DexClass dexClass : apkParser.getDexClasses()) {
   System.out.println(dexClass.classType);
 }
@@ -43,7 +43,7 @@ for (DexClass dexClass : apkParser.getDexClasses()) {
 #####4. Get certificate and verify apk signature
 ```java
 ApplicationInfo appInfo = getPackageManager().getApplicationInfo("com.instagram.android", 0);
-ApkParser apkParser = new ApkParser(appInfo.sourceDir);
+ApkParser apkParser = ApkParser.create(appInfo);
 if (apkParser.verifyApk() == ApkParser.ApkSignStatus.SIGNED) {
   System.out.println(apkParser.getCertificateMeta().signAlgorithm);
 }
@@ -55,7 +55,7 @@ determined by Locales.
 If the locale is not set, the "en_US" locale(<code>Locale.US</code>) is used. You can set the 
 locale like this:
 ```java
-ApkParser apkParser = new ApkParser(new File(filePath));
+ApkParser apkParser = ApkParser.create(filePath);
 apkParser.setPreferredLocale(Locale.SIMPLIFIED_CHINESE);
 ApkMeta apkMeta = apkParser.getApkMeta();
 ```
