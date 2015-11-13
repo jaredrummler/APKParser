@@ -28,6 +28,8 @@
 
 package com.jaredrummler.apkparser;
 
+import android.content.pm.ApplicationInfo;
+
 import com.jaredrummler.apkparser.exception.ParserException;
 import com.jaredrummler.apkparser.model.ApkMeta;
 import com.jaredrummler.apkparser.model.CertificateMeta;
@@ -65,6 +67,18 @@ public class ApkParser implements Closeable {
 
   private static final Locale DEFAULT_LOCALE = Locale.US;
 
+  public static ApkParser create(ApplicationInfo applicationInfo) {
+    return new ApkParser(new File(applicationInfo.sourceDir));
+  }
+
+  public static ApkParser create(String path) {
+    return new ApkParser(new File(path));
+  }
+
+  public static ApkParser create(File file) {
+    return new ApkParser(file);
+  }
+
   private DexClass[] dexClasses;
   private ResourceTable resourceTable;
   private String manifestXml;
@@ -75,13 +89,14 @@ public class ApkParser implements Closeable {
   private File apkFile;
   private Locale preferredLocale = DEFAULT_LOCALE;
 
-  public ApkParser(String filePath) throws IOException {
-    this(new File(filePath));
-  }
-
-  public ApkParser(File file) throws IOException {
+  private ApkParser(File file) throws InvalidApkException {
     apkFile = file;
-    zf = new ZipFile(file);
+    try {
+      zf = new ZipFile(file);
+    } catch (IOException e) {
+      throw new InvalidApkException(
+          String.format("%s is not a valid APK file", file.getAbsolutePath()), e);
+    }
   }
 
   /**
@@ -333,4 +348,12 @@ public class ApkParser implements Closeable {
     public static final int INCORRECT = 0x01;
     public static final int SIGNED = 0x02;
   }
+
+  public static class InvalidApkException extends RuntimeException {
+
+    public InvalidApkException(String detailMessage, Throwable throwable) {
+      super(detailMessage, throwable);
+    }
+  }
+
 }
