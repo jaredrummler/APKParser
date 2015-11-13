@@ -53,6 +53,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
+import java.text.ParseException;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -116,7 +117,7 @@ public class ApkParser implements Closeable {
    * @throws IOException
    *     if parsing the AndroidManifest failed.
    */
-  public AndroidManifest getAndroidManifest() throws IOException {
+  public AndroidManifest getAndroidManifest() throws IOException, ParseException {
     if (androidManifest == null) {
       // TODO: clean up. We are parsing XML twice.
       androidManifest = new AndroidManifest(getApkMeta(), manifestXml);
