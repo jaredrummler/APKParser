@@ -85,17 +85,16 @@ public class ApkParser implements Closeable {
   private ApkMeta apkMeta;
   private Set<Locale> locales;
   private CertificateMeta certificate;
-  private final ZipFile zf;
+  private final ZipFile zipFile;
   private File apkFile;
   private Locale preferredLocale = DEFAULT_LOCALE;
 
   private ApkParser(File file) throws InvalidApkException {
-    apkFile = file;
     try {
-      zf = new ZipFile(file);
+      apkFile = file;
+      zipFile = new ZipFile(file);
     } catch (IOException e) {
-      throw new InvalidApkException(
-          String.format("%s is not a valid APK file", file.getAbsolutePath()), e);
+      throw new InvalidApkException(String.format("Invalid APK: %s", file.getAbsolutePath()), e);
     }
   }
 
@@ -140,7 +139,7 @@ public class ApkParser implements Closeable {
 
   private void parseCertificate() throws IOException, CertificateException {
     ZipEntry entry = null;
-    Enumeration<? extends ZipEntry> enu = zf.entries();
+    Enumeration<? extends ZipEntry> enu = zipFile.entries();
     while (enu.hasMoreElements()) {
       ZipEntry ne = enu.nextElement();
       if (ne.isDirectory()) {
@@ -155,7 +154,7 @@ public class ApkParser implements Closeable {
     if (entry == null) {
       throw new ParserException("ApkParser certificate not found");
     }
-    InputStream in = zf.getInputStream(entry);
+    InputStream in = zipFile.getInputStream(entry);
     CertificateParser parser = new CertificateParser(in);
     certificate = parser.parse();
     in.close();
@@ -188,7 +187,7 @@ public class ApkParser implements Closeable {
    * @throws IOException
    */
   public String transBinaryXml(String path) throws IOException {
-    ZipEntry entry = Utils.getEntry(zf, path);
+    ZipEntry entry = Utils.getEntry(zipFile, path);
     if (entry == null) {
       return null;
     }
@@ -215,14 +214,14 @@ public class ApkParser implements Closeable {
   }
 
   private void transBinaryXml(String path, XmlStreamer xmlStreamer) throws IOException {
-    ZipEntry entry = Utils.getEntry(zf, path);
+    ZipEntry entry = Utils.getEntry(zipFile, path);
     if (entry == null) {
       return;
     }
     if (resourceTable == null) {
       parseResourceTable();
     }
-    InputStream in = zf.getInputStream(entry);
+    InputStream in = zipFile.getInputStream(entry);
     ByteBuffer buffer = ByteBuffer.wrap(Utils.toByteArray(in));
     BinaryXmlParser binaryXmlParser = new BinaryXmlParser(buffer, resourceTable);
     binaryXmlParser.setLocale(preferredLocale);
@@ -241,11 +240,11 @@ public class ApkParser implements Closeable {
   }
 
   private void parseDexFile() throws IOException {
-    ZipEntry resourceEntry = Utils.getEntry(zf, AndroidConstants.DEX_FILE);
+    ZipEntry resourceEntry = Utils.getEntry(zipFile, AndroidConstants.DEX_FILE);
     if (resourceEntry == null) {
       throw new ParserException("Resource table not found");
     }
-    InputStream in = zf.getInputStream(resourceEntry);
+    InputStream in = zipFile.getInputStream(resourceEntry);
     ByteBuffer buffer = ByteBuffer.wrap(Utils.toByteArray(in));
     DexParser dexParser = new DexParser(buffer);
     dexClasses = dexParser.parse();
@@ -255,11 +254,11 @@ public class ApkParser implements Closeable {
    * read file in apk into bytes
    */
   public byte[] getFileData(String path) throws IOException {
-    ZipEntry entry = Utils.getEntry(zf, path);
+    ZipEntry entry = Utils.getEntry(zipFile, path);
     if (entry == null) {
       return null;
     }
-    InputStream inputStream = zf.getInputStream(entry);
+    InputStream inputStream = zipFile.getInputStream(entry);
     return Utils.toByteArray(inputStream);
   }
 
@@ -272,7 +271,7 @@ public class ApkParser implements Closeable {
    *     if reading the APK file failed.
    */
   public int verifyApk() throws IOException {
-    ZipEntry entry = Utils.getEntry(zf, "META-INF/MANIFEST.MF");
+    ZipEntry entry = Utils.getEntry(zipFile, "META-INF/MANIFEST.MF");
     if (entry == null) {
       // apk is not signed;
       return ApkSignStatus.NOT_SIGNED;
@@ -303,7 +302,7 @@ public class ApkParser implements Closeable {
   }
 
   private void parseResourceTable() throws IOException {
-    ZipEntry entry = Utils.getEntry(zf, AndroidConstants.RESOURCE_FILE);
+    ZipEntry entry = Utils.getEntry(zipFile, AndroidConstants.RESOURCE_FILE);
     if (entry == null) {
       // if no resource entry has been found, we assume it is not needed by this APK
       resourceTable = new ResourceTable();
@@ -312,7 +311,7 @@ public class ApkParser implements Closeable {
     }
     resourceTable = new ResourceTable();
     locales = Collections.emptySet();
-    InputStream in = zf.getInputStream(entry);
+    InputStream in = zipFile.getInputStream(entry);
     ByteBuffer buffer = ByteBuffer.wrap(Utils.toByteArray(in));
     ResourceTableParser resourceTableParser = new ResourceTableParser(buffer);
     resourceTableParser.parse();
@@ -323,7 +322,7 @@ public class ApkParser implements Closeable {
   @Override public void close() throws IOException {
     resourceTable = null;
     certificate = null;
-    zf.close();
+    zipFile.close();
   }
 
   public Locale getPreferredLocale() {
