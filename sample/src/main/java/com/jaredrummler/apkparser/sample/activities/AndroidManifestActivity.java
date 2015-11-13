@@ -22,13 +22,13 @@ import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.view.View;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 
-import com.google.common.html.HtmlEscapers;
 import com.jaredrummler.apkparser.ApkParser;
 import com.jaredrummler.apkparser.sample.R;
 import com.jaredrummler.apkparser.sample.util.AppNames;
@@ -98,7 +98,7 @@ public class AndroidManifestActivity extends AppCompatActivity {
 
       @Override public void run() {
         try {
-          sourceCodeText = HtmlEscapers.htmlEscaper().escape(apkParser.getManifestXml());
+          sourceCodeText = Html.escapeHtml(apkParser.getManifestXml());
         } catch (IOException e) {
           e.printStackTrace();
         }
