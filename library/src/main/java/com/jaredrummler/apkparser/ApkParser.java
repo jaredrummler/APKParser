@@ -336,10 +336,13 @@ public class ApkParser implements Closeable {
     locales = resourceTableParser.getLocales();
   }
 
-  @Override public void close() throws IOException {
+  @Override public void close() {
     resourceTable = null;
     certificate = null;
-    zipFile.close();
+    try {
+      zipFile.close();
+    } catch (Exception ignored) {
+    }
   }
 
   public Locale getPreferredLocale() {

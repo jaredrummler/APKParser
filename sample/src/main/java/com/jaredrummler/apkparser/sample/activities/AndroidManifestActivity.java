@@ -20,6 +20,7 @@ package com.jaredrummler.apkparser.sample.activities;
 import android.content.pm.PackageInfo;
 import android.content.res.AssetManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
@@ -37,87 +38,102 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Simple example that parses the AndroidManifest.xml.
- *
- * More examples to come.
+ * Simple example that parses the AndroidManifest.xml and displays the source in a WebView
  */
 public class AndroidManifestActivity extends AppCompatActivity {
 
-  private ApkParser apkParser;
   private WebView webView;
   private String sourceCodeText;
 
+  private final WebViewClient webViewClient = new WebViewClient() {
+
+    @Override public void onPageFinished(WebView view, String url) {
+      ProgressBar progress = (ProgressBar) findViewById(R.id.progress);
+      progress.setVisibility(View.GONE);
+    }
+
+    @Override public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+      InputStream stream = inputStreamForAndroidResource(url);
+      if (stream != null) {
+        return new WebResourceResponse("text/javascript", "UTF-8", stream);
+      }
+      return super.shouldInterceptRequest(view, url);
+    }
+
+    private InputStream inputStreamForAndroidResource(String url) {
+      final String ANDROID_ASSET = "file:///android_asset/";
+
+      if (url.contains(ANDROID_ASSET)) {
+        url = url.replaceFirst(ANDROID_ASSET, "");
+        try {
+          AssetManager assets = getAssets();
+          Uri uri = Uri.parse(url);
+          return assets.open(uri.getPath(), AssetManager.ACCESS_STREAMING);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      }
+      return null;
+    }
+
+  };
+
   @Override protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-
     setContentView(R.layout.source_viewer);
 
     PackageInfo packageInfo = getIntent().getParcelableExtra("app");
 
-    String title = AppNames.getLabel(getPackageManager(), packageInfo);
-    getSupportActionBar().setTitle(title);
+    getSupportActionBar().setTitle(AppNames.getLabel(getPackageManager(), packageInfo));
     getSupportActionBar().setSubtitle("AndroidManifest.xml");
-
-    apkParser = ApkParser.create(packageInfo.applicationInfo);
 
     webView = (WebView) findViewById(R.id.source_view);
     webView.getSettings().setJavaScriptEnabled(true);
     webView.getSettings().setDefaultTextEncodingName("UTF-8");
-    webView.setWebViewClient(new WebViewClient() {
+    webView.setWebViewClient(webViewClient);
 
-      @Override public void onPageFinished(WebView view, String url) {
-        ProgressBar progress = (ProgressBar) findViewById(R.id.progress);
-        progress.setVisibility(View.GONE);
+    if (savedInstanceState != null && savedInstanceState.containsKey("source")) {
+      sourceCodeText = savedInstanceState.getString("source");
+    }
+
+    if (sourceCodeText == null) {
+      new AndroidXmlLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, packageInfo);
+    } else {
+      loadSourceCode(sourceCodeText);
+    }
+  }
+
+  @Override protected void onSaveInstanceState(Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putString("source", sourceCodeText);
+  }
+
+  private void loadSourceCode(String html) {
+    String data = String.format(
+        "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /><script src=\"run_prettify.js?skin=sons-of-obsidian\"></script></head><body bgcolor=\"#000000\"><pre class=\"prettyprint linenums\">%s</pre></body></html>",
+        html);
+    webView.loadDataWithBaseURL("file:///android_asset/", data, "text/html", "UTF-8", null);
+  }
+
+  private final class AndroidXmlLoader extends AsyncTask<PackageInfo, Void, String> {
+
+    @Override protected String doInBackground(PackageInfo... params) {
+      ApkParser apkParser = ApkParser.create(params[0].applicationInfo);
+      try {
+        String xml = apkParser.getManifestXml();
+        return Html.escapeHtml(xml);
+      } catch (IOException e) {
+        e.printStackTrace();
+      } finally {
+        apkParser.close();
       }
+      return null;
+    }
 
-      @Override public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-        InputStream stream = inputStreamForAndroidResource(url);
-        if (stream != null) {
-          return new WebResourceResponse("text/javascript", "UTF-8", stream);
-        }
-        return super.shouldInterceptRequest(view, url);
-      }
-
-      private InputStream inputStreamForAndroidResource(String url) {
-        final String ANDROID_ASSET = "file:///android_asset/";
-
-        if (url.contains(ANDROID_ASSET)) {
-          url = url.replaceFirst(ANDROID_ASSET, "");
-          try {
-            AssetManager assets = getAssets();
-            Uri uri = Uri.parse(url);
-            return assets.open(uri.getPath(), AssetManager.ACCESS_STREAMING);
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-        return null;
-      }
-    });
-
-    new Thread(new Runnable() {
-
-      @Override public void run() {
-        if (sourceCodeText == null) {
-          try {
-            sourceCodeText = Html.escapeHtml(apkParser.getManifestXml());
-            apkParser.close();
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
-        }
-
-        runOnUiThread(new Runnable() {
-
-          @Override public void run() {
-            webView.loadDataWithBaseURL("file:///android_asset/",
-                "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" /><script src=\"run_prettify.js?skin=sons-of-obsidian\"></script></head><body bgcolor=\"#000000\"><pre class=\"prettyprint linenums\">" +
-                    sourceCodeText + "</pre></body></html>", "text/html", "UTF-8", null);
-          }
-        });
-      }
-    }).start();
-
+    @Override protected void onPostExecute(String escapedHtml) {
+      sourceCodeText = escapedHtml;
+      loadSourceCode(escapedHtml);
+    }
   }
 
 }
