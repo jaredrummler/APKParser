@@ -27,14 +27,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.jaredrummler.apkparser.sample.dialogs.XmlListDialog;
 import com.jaredrummler.apkparser.sample.fragments.AppListFragment;
 import com.jaredrummler.apkparser.sample.interfaces.ApkParserSample;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
+import com.jaredrummler.apkparser.sample.util.Helper;
 
 public class MainActivity extends AppCompatActivity implements ApkParserSample {
 
@@ -63,30 +56,7 @@ public class MainActivity extends AppCompatActivity implements ApkParserSample {
     new AsyncTask<Void, Void, String[]>() {
 
       @Override protected String[] doInBackground(Void... params) {
-        List<String> xmlFiles = new ArrayList<>();
-        ZipFile zipFile = null;
-        try {
-          zipFile = new ZipFile(app.applicationInfo.sourceDir);
-          Enumeration<? extends ZipEntry> entries = zipFile.entries();
-          while (entries.hasMoreElements()) {
-            ZipEntry entry = entries.nextElement();
-            String name = entry.getName();
-            if (name.endsWith(".xml") && !name.equals("AndroidManifest.xml")) {
-              xmlFiles.add(name);
-            }
-          }
-        } catch (IOException e) {
-          e.printStackTrace();
-        } finally {
-          if (zipFile != null) {
-            try {
-              zipFile.close();
-            } catch (IOException ignored) {
-            }
-          }
-        }
-        Collections.sort(xmlFiles);
-        return xmlFiles.toArray(new String[xmlFiles.size()]);
+        return Helper.getXmlFiles(app.applicationInfo.sourceDir);
       }
 
       @Override protected void onPostExecute(String[] items) {
