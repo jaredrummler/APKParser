@@ -29,6 +29,8 @@
 package com.jaredrummler.apkparser;
 
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 
 import com.jaredrummler.apkparser.exception.ParserException;
 import com.jaredrummler.apkparser.model.AndroidManifest;
@@ -69,6 +71,15 @@ import javax.security.cert.CertificateException;
 public class ApkParser implements Closeable {
 
   private static final Locale DEFAULT_LOCALE = Locale.US;
+
+  public static ApkParser create(PackageManager pm, String packageName)
+      throws PackageManager.NameNotFoundException {
+    return new ApkParser(new File(pm.getApplicationInfo(packageName, 0).sourceDir));
+  }
+
+  public static ApkParser create(PackageInfo packageInfo) {
+    return new ApkParser(new File(packageInfo.applicationInfo.sourceDir));
+  }
 
   public static ApkParser create(ApplicationInfo applicationInfo) {
     return new ApkParser(new File(applicationInfo.sourceDir));
