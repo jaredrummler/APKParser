@@ -23,20 +23,27 @@ import java.util.List;
 
 public class AndroidComponent {
 
-  public static Builder newAndroidComponent() {
-    return new Builder();
+  public static final int TYPE_ACTIVITY = 1;
+  public static final int TYPE_SERVICE = 2;
+  public static final int TYPE_CONTENT_PROVIDER = 3;
+  public static final int TYPE_BROADCAST_RECEIVER = 4;
+
+  public static Builder newAndroidComponent(int type) {
+    return new Builder(type);
   }
 
   public final String name;
   public final boolean exported;
   public final String process;
   public final List<IntentFilter> intentFilters;
+  public final int type;
 
   private AndroidComponent(Builder builder) {
     this.name = builder.name;
     this.exported = builder.exported;
     this.process = builder.process;
     this.intentFilters = builder.intentFilters;
+    this.type = builder.type;
   }
 
   public static final class Builder {
@@ -44,9 +51,11 @@ public class AndroidComponent {
     private String name;
     private boolean exported;
     private String process;
-    public final List<IntentFilter> intentFilters = new ArrayList<>();
+    private final List<IntentFilter> intentFilters = new ArrayList<>();
+    private final int type;
 
-    private Builder() {
+    private Builder(int type) {
+      this.type = type;
     }
 
     public AndroidComponent build() {

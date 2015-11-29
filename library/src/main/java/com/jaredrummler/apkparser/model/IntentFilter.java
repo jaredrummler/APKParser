@@ -42,5 +42,15 @@ public class IntentFilter {
       this.pathPrefix = pathPrefix;
       this.type = type;
     }
+
+    @Override public String toString() {
+      return "IntentData{" +
+          "scheme='" + scheme + '\'' +
+          ", mimeType='" + mimeType + '\'' +
+          ", host='" + host + '\'' +
+          ", pathPrefix='" + pathPrefix + '\'' +
+          ", type='" + type + '\'' +
+          '}';
+    }
   }
 }
