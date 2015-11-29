@@ -49,6 +49,19 @@ if (apkParser.verifyApk() == ApkParser.ApkSignStatus.SIGNED) {
 }
 ```
 
+#####6. Get intent-filters from apk manifest:
+```java
+ApkParser parser = ApkParser.create(getPackageManager(), "com.android.settings");
+AndroidManifest androidManifest = parser.getAndroidManifest();
+for (AndroidComponent component : androidManifest.getComponents()) {
+  if (!component.intentFilters.isEmpty()) {
+    for (IntentFilter intentFilter : component.intentFilters) {
+      // Got an intent filter for activity/service/provider/receiver.
+    }
+  }
+}
+```
+
 #####5. Locales
 Apk may return different infos(title, icon, etc.) for different region and language, which is 
 determined by Locales.
