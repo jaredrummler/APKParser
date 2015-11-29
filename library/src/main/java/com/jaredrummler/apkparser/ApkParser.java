@@ -219,12 +219,13 @@ public class ApkParser implements Closeable {
     } catch (ParserException e) {
       // plain text file
       InputStream in = zipFile.getInputStream(entry);
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      byte[] buffer = new byte[4096];
+      ByteArrayOutputStream baos = new ByteArrayOutputStream(8192);
+      byte[] buffer = new byte[8192];
       int length;
       while ((length = in.read(buffer)) != -1) {
         baos.write(buffer, 0, length);
       }
+      in.close();
       return baos.toString("UTF-8");
     }
   }
