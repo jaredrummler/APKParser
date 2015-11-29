@@ -48,6 +48,7 @@ import com.jaredrummler.apkparser.struct.AndroidConstants;
 import com.jaredrummler.apkparser.struct.resource.ResourceTable;
 import com.jaredrummler.apkparser.utils.Utils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
@@ -211,9 +212,21 @@ public class ApkParser implements Closeable {
     if (resourceTable == null) {
       parseResourceTable();
     }
-    XmlTranslator xmlTranslator = new XmlTranslator();
-    transBinaryXml(path, xmlTranslator);
-    return xmlTranslator.getXml();
+    try {
+      XmlTranslator xmlTranslator = new XmlTranslator();
+      transBinaryXml(path, xmlTranslator);
+      return xmlTranslator.getXml();
+    } catch (ParserException e) {
+      // plain text file
+      InputStream in = zipFile.getInputStream(entry);
+      ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      byte[] buffer = new byte[4096];
+      int length;
+      while ((length = in.read(buffer)) != -1) {
+        baos.write(buffer, 0, length);
+      }
+      return baos.toString("UTF-8");
+    }
   }
 
   /**
