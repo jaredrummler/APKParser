@@ -40,10 +40,12 @@ import java.io.InputStream;
 /**
  * Simple example that parses the AndroidManifest.xml and displays the source in a WebView
  */
-public class AndroidManifestActivity extends AppCompatActivity {
+public class XmlSourceViewerActivity extends AppCompatActivity {
 
   private WebView webView;
+  private PackageInfo app;
   private String sourceCodeText;
+  private String xml;
 
   private final WebViewClient webViewClient = new WebViewClient() {
 
@@ -82,10 +84,11 @@ public class AndroidManifestActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.source_viewer);
 
-    PackageInfo packageInfo = getIntent().getParcelableExtra("app");
+    app = getIntent().getParcelableExtra("app");
+    xml = getIntent().getStringExtra("xml");
 
-    getSupportActionBar().setTitle(AppNames.getLabel(getPackageManager(), packageInfo));
-    getSupportActionBar().setSubtitle("AndroidManifest.xml");
+    getSupportActionBar().setTitle(AppNames.getLabel(getPackageManager(), app));
+    getSupportActionBar().setSubtitle(xml);
 
     webView = (WebView) findViewById(R.id.source_view);
     webView.getSettings().setJavaScriptEnabled(true);
@@ -97,7 +100,7 @@ public class AndroidManifestActivity extends AppCompatActivity {
     }
 
     if (sourceCodeText == null) {
-      new AndroidXmlLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, packageInfo);
+      new AndroidXmlLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, app);
     } else {
       loadSourceCode(sourceCodeText);
     }
@@ -124,8 +127,13 @@ public class AndroidManifestActivity extends AppCompatActivity {
     @Override protected String doInBackground(PackageInfo... params) {
       ApkParser apkParser = ApkParser.create(params[0].applicationInfo);
       try {
-        String xml = apkParser.getManifestXml();
-        return Html.escapeHtml(xml);
+        final String source;
+        if (xml.equals("AndroidManifest.xml")) {
+          source = apkParser.getManifestXml();
+        } else {
+          source = apkParser.transBinaryXml(xml);
+        }
+        return Html.escapeHtml(source);
       } catch (IOException e) {
         e.printStackTrace();
       } finally {

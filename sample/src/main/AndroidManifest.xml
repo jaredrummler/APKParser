@@ -36,7 +36,7 @@
         <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
-    <activity android:name=".activities.AndroidManifestActivity"/>
+    <activity android:name=".activities.XmlSourceViewerActivity"/>
   </application>
 
 </manifest>

@@ -18,7 +18,6 @@
 package com.jaredrummler.apkparser.sample.fragments;
 
 import android.app.ListFragment;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
@@ -27,8 +26,8 @@ import android.os.Parcelable;
 import android.view.View;
 import android.widget.AdapterView;
 
-import com.jaredrummler.apkparser.sample.activities.AndroidManifestActivity;
 import com.jaredrummler.apkparser.sample.adapters.AppListAdapter;
+import com.jaredrummler.apkparser.sample.dialogs.AppDialog;
 import com.jaredrummler.apkparser.sample.util.AppNames;
 
 import java.util.ArrayList;
@@ -61,9 +60,7 @@ public class AppListFragment extends ListFragment implements AdapterView.OnItemC
   }
 
   @Override public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-    Intent intent = new Intent(getActivity(), AndroidManifestActivity.class);
-    intent.putExtra("app", installedPackages.get(position));
-    startActivity(intent);
+    AppDialog.show(getActivity(), installedPackages.get(position));
   }
 
   private final class AppLoader extends AsyncTask<Void, Void, List<PackageInfo>> {
