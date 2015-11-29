@@ -49,7 +49,7 @@ if (apkParser.verifyApk() == ApkParser.ApkSignStatus.SIGNED) {
 }
 ```
 
-#####6. Get intent-filters from apk manifest:
+#####5. Get intent-filters from apk manifest:
 ```java
 ApkParser parser = ApkParser.create(getPackageManager(), "com.android.settings");
 AndroidManifest androidManifest = parser.getAndroidManifest();
@@ -62,7 +62,7 @@ for (AndroidComponent component : androidManifest.getComponents()) {
 }
 ```
 
-#####5. Locales
+#####6. Locales
 Apk may return different infos(title, icon, etc.) for different region and language, which is 
 determined by Locales.
 If the locale is not set, the "en_US" locale(<code>Locale.US</code>) is used. You can set the 
