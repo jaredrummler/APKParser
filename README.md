@@ -7,8 +7,14 @@ APK parser for Android based on [CaoQianLi's apk-parser](https://github.com/CaoQ
 * Classes from dex file
 * Get certificate metas and verify apk signature
 
+![](sample/graphics/apk_parser_sample.png)
+
 #### Get apk-parser
-You can download the [latest JAR](latest/apk-parser.jar) here or build the project yourself.
+Download [the latest AAR](https://repo1.maven.org/maven2/com/jaredrummler/apk-parser/1.0.0/apk-parser-1.0.0.aar) or grab via Gradle:
+
+```groovy
+compile 'com.jaredrummler:apk-parser:1.0.0'
+```
 
 #### Usage
 The easiest way is to use the ApkParser class, which contains convenient methods to get AndroidManifest.xml, apk meta infos, etc.
