@@ -292,6 +292,19 @@ public class ApkParser implements Closeable {
   }
 
   /**
+   * Get info about classes.dex. Use {@link #getDexInfos()} for apps using multidex.
+   *
+   * @return info about classes.dex
+   * @throws IOException if an error occurs while parsing classes.dex
+   */
+  public DexInfo getDexInfo() throws IOException {
+    if (dex == null) {
+      dex = parseDexFile();
+    }
+    return dex;
+  }
+
+  /**
    * Get class info from DEX file. Currently only class name
    */
   @Deprecated
@@ -312,7 +325,7 @@ public class ApkParser implements Closeable {
 
   private void parseDexFiles() throws IOException {
     dexInfos = new ArrayList<>();
-    dexInfos.add(parseDexFile());
+    dexInfos.add(getDexInfo());
     for (int i = 2; i < 1_000; i++) {
       String path = String.format("classes%d.dex", i);
       ZipEntry entry = Utils.getEntry(zipFile, path);
