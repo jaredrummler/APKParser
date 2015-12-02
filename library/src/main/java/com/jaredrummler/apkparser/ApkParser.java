@@ -294,6 +294,7 @@ public class ApkParser implements Closeable {
   /**
    * Get class info from DEX file. Currently only class name
    */
+  @Deprecated
   public DexClass[] getDexClasses() throws IOException {
     if (dex == null) {
       dex = parseDexFile();
@@ -301,6 +302,7 @@ public class ApkParser implements Closeable {
     return dex.classes;
   }
 
+  @Deprecated
   public DexHeader getDexHeader() throws IOException {
     if (dex == null) {
       dex = parseDexFile();
