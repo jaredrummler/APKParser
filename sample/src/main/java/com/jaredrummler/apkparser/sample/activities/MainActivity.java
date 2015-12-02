@@ -23,11 +23,16 @@ import android.content.pm.PackageInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.Toast;
 
+import com.jaredrummler.apkparser.ApkParser;
 import com.jaredrummler.apkparser.sample.dialogs.XmlListDialog;
 import com.jaredrummler.apkparser.sample.fragments.AppListFragment;
 import com.jaredrummler.apkparser.sample.interfaces.ApkParserSample;
 import com.jaredrummler.apkparser.sample.util.Helper;
+
+import java.io.IOException;
+import java.text.NumberFormat;
 
 public class MainActivity extends AppCompatActivity implements ApkParserSample {
 
@@ -66,5 +71,28 @@ public class MainActivity extends AppCompatActivity implements ApkParserSample {
         }
       }
     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+  }
+
+  @Override public void showMethodCount(final PackageInfo app) {
+    new Thread(new Runnable() {
+
+      @Override public void run() {
+        ApkParser parser = ApkParser.create(app);
+        try {
+          final int methodCount = parser.getDexHeader().methodIdsSize;
+          runOnUiThread(new Runnable() {
+
+            @Override public void run() {
+              String msg = NumberFormat.getNumberInstance().format(methodCount);
+              Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+            }
+          });
+        } catch (IOException e) {
+          e.printStackTrace();
+        } finally {
+          parser.close();
+        }
+      }
+    }).start();
   }
 }

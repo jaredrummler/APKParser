@@ -25,4 +25,6 @@ public interface ApkParserSample {
 
   void listXmlFiles(PackageInfo app);
 
+  void showMethodCount(PackageInfo app);
+
 }

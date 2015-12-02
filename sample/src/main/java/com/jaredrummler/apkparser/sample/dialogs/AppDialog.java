@@ -42,7 +42,8 @@ public class AppDialog extends DialogFragment {
     final PackageInfo app = getArguments().getParcelable("app");
     final String[] items = {
         "AndroidManifest.xml",
-        "Get XML files"
+        "Get XML files",
+        "Get method count"
     };
     return new AlertDialog.Builder(getActivity())
         .setTitle(AppNames.getLabel(getActivity().getPackageManager(), app))
@@ -57,6 +58,9 @@ public class AppDialog extends DialogFragment {
                   break;
                 case 1:
                   callback.listXmlFiles(app);
+                  break;
+                case 2:
+                  callback.showMethodCount(app);
                   break;
               }
             }
