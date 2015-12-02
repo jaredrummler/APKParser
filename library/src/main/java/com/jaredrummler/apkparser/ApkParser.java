@@ -37,6 +37,7 @@ import com.jaredrummler.apkparser.model.AndroidManifest;
 import com.jaredrummler.apkparser.model.ApkMeta;
 import com.jaredrummler.apkparser.model.CertificateMeta;
 import com.jaredrummler.apkparser.model.DexClass;
+import com.jaredrummler.apkparser.model.DexInfo;
 import com.jaredrummler.apkparser.model.Icon;
 import com.jaredrummler.apkparser.parser.ApkMetaTranslator;
 import com.jaredrummler.apkparser.parser.BinaryXmlParser;
@@ -58,8 +59,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.jar.JarEntry;
@@ -94,8 +97,8 @@ public class ApkParser implements Closeable {
     return new ApkParser(file);
   }
 
-  private DexClass[] dexClasses;
-  private DexHeader dexHeader;
+  private List<DexInfo> dexInfos; // multi-dex
+  private DexInfo dex;
   private ResourceTable resourceTable;
   private AndroidManifest androidManifest;
   private String manifestXml;
@@ -274,32 +277,62 @@ public class ApkParser implements Closeable {
   }
 
   /**
+   * Return all classes.dex files. If an app is using multi-dex there will be more than one dex
+   * file.
+   *
+   * @return list of information about dex files.
+   * @throws IOException
+   *     if an error occurs while parsing the DEX file(s).
+   */
+  public List<DexInfo> getDexInfos() throws IOException {
+    if (dexInfos == null) {
+      parseDexFiles();
+    }
+    return dexInfos;
+  }
+
+  /**
    * Get class info from DEX file. Currently only class name
    */
   public DexClass[] getDexClasses() throws IOException {
-    if (dexClasses == null) {
-      parseDexFile();
+    if (dex == null) {
+      dex = parseDexFile();
     }
-    return dexClasses;
+    return dex.classes;
   }
 
   public DexHeader getDexHeader() throws IOException {
-    if (dexHeader == null) {
-      parseDexFile();
+    if (dex == null) {
+      dex = parseDexFile();
     }
-    return dexHeader;
+    return dex.header;
   }
 
-  private void parseDexFile() throws IOException {
-    ZipEntry resourceEntry = Utils.getEntry(zipFile, AndroidConstants.DEX_FILE);
-    if (resourceEntry == null) {
-      throw new ParserException("Resource table not found");
+  private void parseDexFiles() throws IOException {
+    dexInfos = new ArrayList<>();
+    dexInfos.add(parseDexFile());
+    for (int i = 2; i < 1_000; i++) {
+      String path = String.format("classes%d.dex", i);
+      ZipEntry entry = Utils.getEntry(zipFile, path);
+      if (entry == null) {
+        break;
+      }
+      InputStream in = zipFile.getInputStream(entry);
+      ByteBuffer buffer = ByteBuffer.wrap(Utils.toByteArray(in));
+      DexParser dexParser = new DexParser(buffer);
+      dexInfos.add(dexParser.parse());
     }
-    InputStream in = zipFile.getInputStream(resourceEntry);
+  }
+
+  private DexInfo parseDexFile() throws IOException {
+    ZipEntry entry = Utils.getEntry(zipFile, AndroidConstants.DEX_FILE);
+    if (entry == null) {
+      throw new ParserException(AndroidConstants.DEX_FILE + " not found");
+    }
+    InputStream in = zipFile.getInputStream(entry);
     ByteBuffer buffer = ByteBuffer.wrap(Utils.toByteArray(in));
     DexParser dexParser = new DexParser(buffer);
-    dexClasses = dexParser.parse();
-    dexHeader = dexParser.dexHeader;
+    return dexParser.parse();
   }
 
   /**

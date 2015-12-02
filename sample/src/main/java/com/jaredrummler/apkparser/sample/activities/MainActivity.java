@@ -22,10 +22,12 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.jaredrummler.apkparser.ApkParser;
+import com.jaredrummler.apkparser.model.DexInfo;
 import com.jaredrummler.apkparser.sample.dialogs.XmlListDialog;
 import com.jaredrummler.apkparser.sample.fragments.AppListFragment;
 import com.jaredrummler.apkparser.sample.interfaces.ApkParserSample;
@@ -33,6 +35,7 @@ import com.jaredrummler.apkparser.sample.util.Helper;
 
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ApkParserSample {
 
@@ -79,20 +82,32 @@ public class MainActivity extends AppCompatActivity implements ApkParserSample {
       @Override public void run() {
         ApkParser parser = ApkParser.create(app);
         try {
-          final int methodCount = parser.getDexHeader().methodIdsSize;
-          runOnUiThread(new Runnable() {
-
-            @Override public void run() {
-              String msg = NumberFormat.getNumberInstance().format(methodCount);
-              Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-            }
-          });
+          List<DexInfo> dexInfos = parser.getDexInfos();
+          int methodCount = 0;
+          for (DexInfo dexInfo : dexInfos) {
+            methodCount += dexInfo.header.methodIdsSize;
+          }
+          String message = NumberFormat.getNumberInstance().format(methodCount);
+          toast(message, Toast.LENGTH_SHORT);
         } catch (IOException e) {
-          e.printStackTrace();
+          toast(e.getMessage(), Toast.LENGTH_LONG);
         } finally {
           parser.close();
         }
       }
     }).start();
+  }
+
+  private void toast(final String message, final int length) {
+    if (Looper.myLooper() == Looper.getMainLooper()) {
+      Toast.makeText(getApplicationContext(), message, length).show();
+    } else {
+      runOnUiThread(new Runnable() {
+
+        @Override public void run() {
+          Toast.makeText(getApplicationContext(), message, length).show();
+        }
+      });
+    }
   }
 }

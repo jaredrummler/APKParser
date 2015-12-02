@@ -30,6 +30,7 @@ package com.jaredrummler.apkparser.parser;
 
 import com.jaredrummler.apkparser.exception.ParserException;
 import com.jaredrummler.apkparser.model.DexClass;
+import com.jaredrummler.apkparser.model.DexInfo;
 import com.jaredrummler.apkparser.struct.StringPool;
 import com.jaredrummler.apkparser.struct.dex.DexClassStruct;
 import com.jaredrummler.apkparser.struct.dex.DexHeader;
@@ -43,14 +44,13 @@ public class DexParser {
   private static final int NO_INDEX = 0xffffffff;
 
   private final ByteBuffer buffer;
-  public DexHeader dexHeader;
 
   public DexParser(ByteBuffer buffer) {
     this.buffer = buffer.duplicate();
     this.buffer.order(ByteOrder.LITTLE_ENDIAN);
   }
 
-  public DexClass[] parse() throws ParserException {
+  public DexInfo parse() throws ParserException {
     // read magic
     String magic = new String(Buffers.readBytes(buffer, 8));
     if (!magic.startsWith("dex\n")) {
@@ -89,18 +89,18 @@ public class DexParser {
     builder.dataSize(buffer.getInt());
     builder.dataOff(Buffers.readUInt(buffer));
     builder.version(version);
-    dexHeader = builder.build();
+    DexHeader header = builder.build();
 
-    buffer.position((int) dexHeader.headerSize);
+    buffer.position((int) header.headerSize);
 
     // read string pool
-    long[] stringOffsets = readStringPool(dexHeader.stringIdsOff, dexHeader.stringIdsSize);
+    long[] stringOffsets = readStringPool(header.stringIdsOff, header.stringIdsSize);
 
     // read types
-    int[] typeIds = readTypes(dexHeader.typeIdsOff, dexHeader.typeIdsSize);
+    int[] typeIds = readTypes(header.typeIdsOff, header.typeIdsSize);
 
     // read classes
-    DexClassStruct[] dexClassStructs = readClass(dexHeader.classDefsOff, dexHeader.classDefsSize);
+    DexClassStruct[] dexClassStructs = readClass(header.classDefsOff, header.classDefsSize);
 
     StringPool stringpool = readStrings(stringOffsets);
 
@@ -121,7 +121,7 @@ public class DexParser {
       b.accessFlags(dexClassStruct.accessFlags);
       dexClasses[i] = b.build();
     }
-    return dexClasses;
+    return new DexInfo(dexClasses, header);
   }
 
   private DexClassStruct[] readClass(long classDefsOff, int classDefsSize) {
