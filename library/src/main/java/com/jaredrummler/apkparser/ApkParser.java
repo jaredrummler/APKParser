@@ -47,6 +47,7 @@ import com.jaredrummler.apkparser.parser.ResourceTableParser;
 import com.jaredrummler.apkparser.parser.XmlStreamer;
 import com.jaredrummler.apkparser.parser.XmlTranslator;
 import com.jaredrummler.apkparser.struct.AndroidConstants;
+import com.jaredrummler.apkparser.struct.dex.DexHeader;
 import com.jaredrummler.apkparser.struct.resource.ResourceTable;
 import com.jaredrummler.apkparser.utils.Utils;
 
@@ -94,6 +95,7 @@ public class ApkParser implements Closeable {
   }
 
   private DexClass[] dexClasses;
+  private DexHeader dexHeader;
   private ResourceTable resourceTable;
   private AndroidManifest androidManifest;
   private String manifestXml;
@@ -281,6 +283,13 @@ public class ApkParser implements Closeable {
     return dexClasses;
   }
 
+  public DexHeader getDexHeader() throws IOException {
+    if (dexHeader == null) {
+      parseDexFile();
+    }
+    return dexHeader;
+  }
+
   private void parseDexFile() throws IOException {
     ZipEntry resourceEntry = Utils.getEntry(zipFile, AndroidConstants.DEX_FILE);
     if (resourceEntry == null) {
@@ -290,6 +299,7 @@ public class ApkParser implements Closeable {
     ByteBuffer buffer = ByteBuffer.wrap(Utils.toByteArray(in));
     DexParser dexParser = new DexParser(buffer);
     dexClasses = dexParser.parse();
+    dexHeader = dexParser.dexHeader;
   }
 
   /**

@@ -43,6 +43,7 @@ public class DexParser {
   private static final int NO_INDEX = 0xffffffff;
 
   private final ByteBuffer buffer;
+  public DexHeader dexHeader;
 
   public DexParser(ByteBuffer buffer) {
     this.buffer = buffer.duplicate();
@@ -88,18 +89,18 @@ public class DexParser {
     builder.dataSize(buffer.getInt());
     builder.dataOff(Buffers.readUInt(buffer));
     builder.version(version);
-    DexHeader header = builder.build();
+    dexHeader = builder.build();
 
-    buffer.position((int) header.headerSize);
+    buffer.position((int) dexHeader.headerSize);
 
     // read string pool
-    long[] stringOffsets = readStringPool(header.stringIdsOff, header.stringIdsSize);
+    long[] stringOffsets = readStringPool(dexHeader.stringIdsOff, dexHeader.stringIdsSize);
 
     // read types
-    int[] typeIds = readTypes(header.typeIdsOff, header.typeIdsSize);
+    int[] typeIds = readTypes(dexHeader.typeIdsOff, dexHeader.typeIdsSize);
 
     // read classes
-    DexClassStruct[] dexClassStructs = readClass(header.classDefsOff, header.classDefsSize);
+    DexClassStruct[] dexClassStructs = readClass(dexHeader.classDefsOff, dexHeader.classDefsSize);
 
     StringPool stringpool = readStrings(stringOffsets);
 
@@ -120,7 +121,6 @@ public class DexParser {
       b.accessFlags(dexClassStruct.accessFlags);
       dexClasses[i] = b.build();
     }
-
     return dexClasses;
   }
 
