@@ -1,6 +1,5 @@
-APK parser for Android based on [CaoQianLi's apk-parser](https://github.com/CaoQianLi/apk-parser)
+# APK Parser [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.jaredrummler/apk-parser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.jaredrummler/apk-parser) [![Software License](https://img.shields.io/badge/license-BSD%203%20Clause-blue.svg)](LICENSE.txt) 
 
-[![Software License](https://img.shields.io/badge/license-BSD%203%20Clause-blue.svg)](LICENSE.txt) 
 #### Features
 * Retrieve basic apk metas, such as title, icon, package name, version, etc.
 * Parse and convert binary xml file to text 
@@ -10,10 +9,10 @@ APK parser for Android based on [CaoQianLi's apk-parser](https://github.com/CaoQ
 ![](sample/graphics/apk_parser_sample.png)
 
 #### Get apk-parser
-Download [the latest AAR](https://repo1.maven.org/maven2/com/jaredrummler/apk-parser/1.0.0/apk-parser-1.0.0.aar) or grab via Gradle:
+Download [the latest AAR](https://repo1.maven.org/maven2/com/jaredrummler/apk-parser/1.0.1/apk-parser-1.0.1.aar) or grab via Gradle:
 
 ```groovy
-compile 'com.jaredrummler:apk-parser:1.0.0'
+compile 'com.jaredrummler:apk-parser:1.0.1'
 ```
 
 #### Usage
@@ -41,8 +40,10 @@ String xml = apkParser.transBinaryXml("res/layout/activity_main.xml");
 ```java
 ApplicationInfo appInfo = getPackageManager().getApplicationInfo("com.instagram.android", 0);
 ApkParser apkParser = ApkParser.create(appInfo);
-for (DexClass dexClass : apkParser.getDexClasses()) {
-  System.out.println(dexClass.classType);
+List<DexInfo> dexFiles = apkParser.getDexInfos(); // if size > 1 then app is using multidex
+for (DexInfo dexInfo : dexFiles) {
+  DexClass[] dexClasses = dexInfo.classes;
+  DexHeader dexHeader = dexInfo.header;
 }
 ```
 
@@ -83,3 +84,7 @@ Apk parser will find best match languages with locale you specified.
 
 If locale is set to null, ApkParser will not translate resource tag, just give the resource id.
 For example, apk title will be '@string/app_name' instead of 'WeChat'.
+
+___
+
+APK Parser is based on [CaoQianLi's apk-parser](https://github.com/CaoQianLi/apk-parser)
