@@ -279,7 +279,7 @@ public class ParseUtils {
     return value + pstr;
   }
 
-  public static void checkChunkType(int expected, int real) {
+  public static void checkChunkType(int expected, int real) throws ParserException {
     if (expected != real) {
       throw new ParserException("Expect chunk type:" + Integer.toHexString(expected)
           + ", but got:" + Integer.toHexString(real));

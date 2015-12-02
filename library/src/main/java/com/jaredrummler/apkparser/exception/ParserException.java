@@ -28,7 +28,9 @@
 
 package com.jaredrummler.apkparser.exception;
 
-public class ParserException extends RuntimeException {
+import java.io.IOException;
+
+public class ParserException extends IOException {
 
   public ParserException(String msg) {
     super(msg);

@@ -26,7 +26,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.ByteArrayInputStream;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +88,7 @@ public class AndroidManifest {
   public final ApkMeta apkMeta;
   public final String xml;
 
-  public AndroidManifest(ApkMeta apkMeta, String xml) throws ParseException {
+  public AndroidManifest(ApkMeta apkMeta, String xml) throws ParserException {
     this.apkMeta = apkMeta;
     this.xml = xml;
     parse();
@@ -107,7 +106,7 @@ public class AndroidManifest {
     return components;
   }
 
-  private void parse() {
+  private void parse() throws ParserException {
     DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
     Document document;
     try {

@@ -57,7 +57,7 @@ public class ResourceTableParser {
     this.locales = new HashSet<>();
   }
 
-  public void parse() {
+  public void parse() throws ParserException {
     ResourceTableHeader resourceTableHeader = (ResourceTableHeader) readChunkHeader();
     stringPool = ParseUtils.readStringPool(buffer, (StringPoolHeader) readChunkHeader());
     resourceTable = new ResourceTable();
@@ -70,7 +70,8 @@ public class ResourceTableParser {
     }
   }
 
-  private Pair<ResourcePackage, PackageHeader> readPackage(PackageHeader packageHeader) {
+  private Pair<ResourcePackage, PackageHeader> readPackage(PackageHeader packageHeader)
+      throws ParserException {
     Pair<ResourcePackage, PackageHeader> pair = new Pair<>();
     ResourcePackage resourcePackage = new ResourcePackage(packageHeader);
     pair.setLeft(resourcePackage);
@@ -146,7 +147,7 @@ public class ResourceTableParser {
     return pair;
   }
 
-  private ChunkHeader readChunkHeader() {
+  private ChunkHeader readChunkHeader() throws ParserException {
     long begin = buffer.position();
 
     int chunkType = Buffers.readUShort(buffer);

@@ -77,7 +77,7 @@ public class BinaryXmlParser {
     this.resourceTable = resourceTable;
   }
 
-  public void parse() {
+  public void parse() throws ParserException {
     ChunkHeader chunkHeader = readChunkHeader();
     if (chunkHeader == null) {
       return;
@@ -295,7 +295,7 @@ public class BinaryXmlParser {
     return resourceIds;
   }
 
-  private ChunkHeader readChunkHeader() {
+  private ChunkHeader readChunkHeader() throws ParserException {
     // finished
     if (!buffer.hasRemaining()) {
       return null;

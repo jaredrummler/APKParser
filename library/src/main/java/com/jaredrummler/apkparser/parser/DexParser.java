@@ -50,7 +50,7 @@ public class DexParser {
     this.buffer.order(ByteOrder.LITTLE_ENDIAN);
   }
 
-  public DexClass[] parse() {
+  public DexClass[] parse() throws ParserException {
     // read magic
     String magic = new String(Buffers.readBytes(buffer, 8));
     if (!magic.startsWith("dex\n")) {
@@ -153,7 +153,7 @@ public class DexParser {
     return typeIds;
   }
 
-  private StringPool readStrings(long[] offsets) {
+  private StringPool readStrings(long[] offsets) throws ParserException {
     // read strings.
     // buffer some apk, the strings' offsets may not well ordered. we sort it first
     StringPoolEntry[] entries = new StringPoolEntry[offsets.length];
@@ -187,13 +187,13 @@ public class DexParser {
     return offsets;
   }
 
-  private String readString() {
+  private String readString() throws ParserException {
     // the length is char len, not byte len
     int strLen = readVarInts();
     return Buffers.readString(buffer, strLen);
   }
 
-  private int readVarInts() {
+  private int readVarInts() throws ParserException {
     int i = 0;
     int count = 0;
     short s;
