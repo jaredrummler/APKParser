@@ -1,4 +1,4 @@
-# APK Parser [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.jaredrummler/apk-parser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.jaredrummler/apk-parser) [![Software License](https://img.shields.io/badge/license-BSD%203%20Clause-blue.svg)](LICENSE.txt) 
+# APK Parser [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.jaredrummler/apk-parser/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.jaredrummler/apk-parser) [![Software License](https://img.shields.io/badge/license-BSD%203%20Clause-blue.svg)](LICENSE.txt) [![Twitter Follow](https://img.shields.io/twitter/follow/jrummy16.svg?style=social)](https://twitter.com/jrummy16)
 
 #### Features
 * Retrieve basic apk metas, such as title, icon, package name, version, etc.
