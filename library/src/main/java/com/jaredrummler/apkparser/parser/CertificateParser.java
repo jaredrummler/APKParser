@@ -44,65 +44,65 @@ import javax.security.cert.X509Certificate;
 
 public class CertificateParser {
 
-  private final InputStream in;
+    private final InputStream in;
 
-  public CertificateParser(InputStream in) {
-    this.in = new BufferedInputStream(in);
-  }
-
-  public CertificateMeta parse() throws IOException, CertificateException {
-    X509Certificate certificate = X509Certificate.getInstance(Utils.toByteArray(in));
-    CertificateMeta.Builder builder = CertificateMeta.newCertificateMeta();
-    byte[] bytes = certificate.getEncoded();
-    String certMd5 = md5Digest(bytes);
-    String publicKeyString = byteToHexString(bytes);
-    String certBase64Md5 = md5Digest(publicKeyString);
-    builder.data(bytes);
-    builder.certBase64Md5(certBase64Md5);
-    builder.certMd5(certMd5);
-    builder.startDate(certificate.getNotBefore());
-    builder.endDate(certificate.getNotAfter());
-    builder.signAlgorithm(certificate.getSigAlgName());
-    builder.signAlgorithmOID(certificate.getSigAlgOID());
-    return builder.build();
-  }
-
-  private String md5Digest(byte[] input) throws IOException {
-    MessageDigest digest = getDigest("MD5");
-    digest.update(input);
-    return getHexString(digest.digest());
-  }
-
-  private String md5Digest(String input) throws IOException {
-    MessageDigest digest = getDigest("MD5");
-    digest.update(input.getBytes(Charset.forName("UTF-8")));
-    return getHexString(digest.digest());
-  }
-
-  private String byteToHexString(byte[] bArray) {
-    StringBuilder sb = new StringBuilder(bArray.length);
-    String sTemp;
-    for (byte aBArray : bArray) {
-      sTemp = Integer.toHexString(0xFF & (char) aBArray);
-      if (sTemp.length() < 2) {
-        sb.append(0);
-      }
-      sb.append(sTemp.toUpperCase());
+    public CertificateParser(InputStream in) {
+        this.in = new BufferedInputStream(in);
     }
-    return sb.toString();
-  }
 
-  private String getHexString(byte[] digest) {
-    BigInteger bi = new BigInteger(1, digest);
-    return String.format("%032x", bi);
-  }
-
-  private MessageDigest getDigest(String algorithm) {
-    try {
-      return MessageDigest.getInstance(algorithm);
-    } catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
+    public CertificateMeta parse() throws IOException, CertificateException {
+        X509Certificate certificate = X509Certificate.getInstance(Utils.toByteArray(in));
+        CertificateMeta.Builder builder = CertificateMeta.newCertificateMeta();
+        byte[] bytes = certificate.getEncoded();
+        String certMd5 = md5Digest(bytes);
+        String publicKeyString = byteToHexString(bytes);
+        String certBase64Md5 = md5Digest(publicKeyString);
+        builder.data(bytes);
+        builder.certBase64Md5(certBase64Md5);
+        builder.certMd5(certMd5);
+        builder.startDate(certificate.getNotBefore());
+        builder.endDate(certificate.getNotAfter());
+        builder.signAlgorithm(certificate.getSigAlgName());
+        builder.signAlgorithmOID(certificate.getSigAlgOID());
+        return builder.build();
     }
-  }
+
+    private String md5Digest(byte[] input) throws IOException {
+        MessageDigest digest = getDigest("MD5");
+        digest.update(input);
+        return getHexString(digest.digest());
+    }
+
+    private String md5Digest(String input) throws IOException {
+        MessageDigest digest = getDigest("MD5");
+        digest.update(input.getBytes(Charset.forName("UTF-8")));
+        return getHexString(digest.digest());
+    }
+
+    private String byteToHexString(byte[] bArray) {
+        StringBuilder sb = new StringBuilder(bArray.length);
+        String sTemp;
+        for (byte aBArray : bArray) {
+            sTemp = Integer.toHexString(0xFF & (char) aBArray);
+            if (sTemp.length() < 2) {
+                sb.append(0);
+            }
+            sb.append(sTemp.toUpperCase());
+        }
+        return sb.toString();
+    }
+
+    private String getHexString(byte[] digest) {
+        BigInteger bi = new BigInteger(1, digest);
+        return String.format("%032x", bi);
+    }
+
+    private MessageDigest getDigest(String algorithm) {
+        try {
+            return MessageDigest.getInstance(algorithm);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
 }

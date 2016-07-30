@@ -28,6 +28,8 @@
 
 package com.jaredrummler.apkparser.struct.resource;
 
+import android.util.SparseArray;
+
 import com.jaredrummler.apkparser.struct.StringPool;
 import com.jaredrummler.apkparser.utils.ResourceLoader;
 
@@ -36,24 +38,24 @@ import java.util.Map;
 
 public class ResourceTable {
 
-  private Map<Short, ResourcePackage> packageMap = new HashMap<>();
-  private StringPool stringPool;
+    private Map<Short, ResourcePackage> packageMap = new HashMap<>();
+    private StringPool stringPool;
 
-  public static Map<Integer, String> sysStyle = ResourceLoader.loadSystemStyles();
+    public static SparseArray<String> sysStyle = ResourceLoader.loadSystemStyles();
 
-  public void addPackage(ResourcePackage resourcePackage) {
-    this.packageMap.put(resourcePackage.getId(), resourcePackage);
-  }
+    public void addPackage(ResourcePackage resourcePackage) {
+        this.packageMap.put(resourcePackage.getId(), resourcePackage);
+    }
 
-  public ResourcePackage getPackage(short id) {
-    return this.packageMap.get(id);
-  }
+    public ResourcePackage getPackage(short id) {
+        return this.packageMap.get(id);
+    }
 
-  public StringPool getStringPool() {
-    return stringPool;
-  }
+    public StringPool getStringPool() {
+        return stringPool;
+    }
 
-  public void setStringPool(StringPool stringPool) {
-    this.stringPool = stringPool;
-  }
+    public void setStringPool(StringPool stringPool) {
+        this.stringPool = stringPool;
+    }
 }
