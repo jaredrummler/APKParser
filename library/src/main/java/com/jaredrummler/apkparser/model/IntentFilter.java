@@ -29,28 +29,38 @@ public class IntentFilter {
   public static class IntentData {
 
     public final String scheme;
-    public final String mimeType;
     public final String host;
+    public final String port;
+    public final String path;
+    public final String pathPattern;
     public final String pathPrefix;
+    public final String mimeType;
     public final String type;
 
-    public IntentData(String scheme, String mimeType, String host, String pathPrefix,
-                      String type) {
+    public IntentData(String scheme, String host, String port, String path, String pathPattern, String pathPrefix,
+                      String mimeType, String type) {
       this.scheme = scheme;
-      this.mimeType = mimeType;
       this.host = host;
+      this.port = port;
+      this.path = path;
+      this.pathPattern = pathPattern;
       this.pathPrefix = pathPrefix;
+      this.mimeType = mimeType;
       this.type = type;
     }
 
     @Override public String toString() {
       return "IntentData{" +
           "scheme='" + scheme + '\'' +
-          ", mimeType='" + mimeType + '\'' +
           ", host='" + host + '\'' +
+          ", port='" + port + '\'' +
+          ", path='" + path + '\'' +
+          ", pathPattern='" + pathPattern + '\'' +
           ", pathPrefix='" + pathPrefix + '\'' +
+          ", mimeType='" + mimeType + '\'' +
           ", type='" + type + '\'' +
           '}';
     }
+
   }
 }

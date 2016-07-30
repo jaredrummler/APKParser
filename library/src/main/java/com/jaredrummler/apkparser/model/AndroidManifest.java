@@ -71,11 +71,13 @@ public class AndroidManifest {
       } else if (intentChildName.equals("data")) {
         String scheme = XmlUtils.getAttribute(intentChildAttributes, "android:scheme");
         String host = XmlUtils.getAttribute(intentChildAttributes, "android:host");
+        String port = XmlUtils.getAttribute(intentChildAttributes, "android:port");
+        String path = XmlUtils.getAttribute(intentChildAttributes, "android:path");
+        String pathPattern = XmlUtils.getAttribute(intentChildAttributes, "android:pathPattern");
         String pathPrefix = XmlUtils.getAttribute(intentChildAttributes, "android:pathPrefix");
         String mimeType = XmlUtils.getAttribute(intentChildAttributes, "android:mimeType");
         String type = XmlUtils.getAttribute(intentChildAttributes, "android:type");
-        intentFilter.dataList.add(new IntentFilter.IntentData(
-            scheme, mimeType, host, pathPrefix, type));
+        intentFilter.dataList.add(new IntentFilter.IntentData(scheme, host, port, path, pathPattern, pathPrefix, mimeType, type));
       }
     }
     return intentFilter;
@@ -127,6 +129,7 @@ public class AndroidManifest {
                 services.add(getAndroidComponent(child, TYPE_SERVICE));
                 break;
               case "activity":
+              case "activity-alias":
                 activities.add(getAndroidComponent(child, TYPE_ACTIVITY));
                 break;
               case "receiver":
