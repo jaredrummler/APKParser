@@ -28,43 +28,52 @@
 
 package com.jaredrummler.apkparser.parser;
 
-import com.jaredrummler.apkparser.struct.xml.*;
+import com.jaredrummler.apkparser.struct.xml.XmlCData;
+import com.jaredrummler.apkparser.struct.xml.XmlNamespaceEndTag;
+import com.jaredrummler.apkparser.struct.xml.XmlNamespaceStartTag;
+import com.jaredrummler.apkparser.struct.xml.XmlNodeEndTag;
+import com.jaredrummler.apkparser.struct.xml.XmlNodeStartTag;
 
 public class CompositeXmlStreamer implements XmlStreamer {
 
-  public final XmlStreamer[] xmlStreamers;
+    public final XmlStreamer[] xmlStreamers;
 
-  public CompositeXmlStreamer(XmlStreamer... xmlStreamers) {
-    this.xmlStreamers = xmlStreamers;
-  }
-
-  @Override public void onStartTag(XmlNodeStartTag xmlNodeStartTag) {
-    for (XmlStreamer xmlStreamer : xmlStreamers) {
-      xmlStreamer.onStartTag(xmlNodeStartTag);
+    public CompositeXmlStreamer(XmlStreamer... xmlStreamers) {
+        this.xmlStreamers = xmlStreamers;
     }
-  }
 
-  @Override public void onEndTag(XmlNodeEndTag xmlNodeEndTag) {
-    for (XmlStreamer xmlStreamer : xmlStreamers) {
-      xmlStreamer.onEndTag(xmlNodeEndTag);
+    @Override
+    public void onStartTag(XmlNodeStartTag xmlNodeStartTag) {
+        for (XmlStreamer xmlStreamer : xmlStreamers) {
+            xmlStreamer.onStartTag(xmlNodeStartTag);
+        }
     }
-  }
 
-  @Override public void onCData(XmlCData xmlCData) {
-    for (XmlStreamer xmlStreamer : xmlStreamers) {
-      xmlStreamer.onCData(xmlCData);
+    @Override
+    public void onEndTag(XmlNodeEndTag xmlNodeEndTag) {
+        for (XmlStreamer xmlStreamer : xmlStreamers) {
+            xmlStreamer.onEndTag(xmlNodeEndTag);
+        }
     }
-  }
 
-  @Override public void onNamespaceStart(XmlNamespaceStartTag tag) {
-    for (XmlStreamer xmlStreamer : xmlStreamers) {
-      xmlStreamer.onNamespaceStart(tag);
+    @Override
+    public void onCData(XmlCData xmlCData) {
+        for (XmlStreamer xmlStreamer : xmlStreamers) {
+            xmlStreamer.onCData(xmlCData);
+        }
     }
-  }
 
-  @Override public void onNamespaceEnd(XmlNamespaceEndTag tag) {
-    for (XmlStreamer xmlStreamer : xmlStreamers) {
-      xmlStreamer.onNamespaceEnd(tag);
+    @Override
+    public void onNamespaceStart(XmlNamespaceStartTag tag) {
+        for (XmlStreamer xmlStreamer : xmlStreamers) {
+            xmlStreamer.onNamespaceStart(tag);
+        }
     }
-  }
+
+    @Override
+    public void onNamespaceEnd(XmlNamespaceEndTag tag) {
+        for (XmlStreamer xmlStreamer : xmlStreamers) {
+            xmlStreamer.onNamespaceEnd(tag);
+        }
+    }
 }
