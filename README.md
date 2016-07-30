@@ -9,10 +9,10 @@
 ![](sample/graphics/apk_parser_sample.png)
 
 #### Get apk-parser
-Download [the latest AAR](https://repo1.maven.org/maven2/com/jaredrummler/apk-parser/1.0.1/apk-parser-1.0.1.aar) or grab via Gradle:
+Download [the latest AAR](https://repo1.maven.org/maven2/com/jaredrummler/apk-parser/1.0.2/apk-parser-1.0.2.aar) or grab via Gradle:
 
 ```groovy
-compile 'com.jaredrummler:apk-parser:1.0.1'
+compile 'com.jaredrummler:apk-parser:1.0.2'
 ```
 
 #### Usage
