@@ -28,18 +28,17 @@
 
 package com.jaredrummler.apkparser.struct.resource;
 
+import android.util.SparseArray;
+
 import com.jaredrummler.apkparser.struct.StringPool;
 import com.jaredrummler.apkparser.utils.ResourceLoader;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class ResourceTable {
 
-  private Map<Short, ResourcePackage> packageMap = new HashMap<>();
+  private SparseArray<ResourcePackage> packageMap = new SparseArray<>();
   private StringPool stringPool;
 
-  public static Map<Integer, String> sysStyle = ResourceLoader.loadSystemStyles();
+  public static SparseArray<String> sysStyle = ResourceLoader.loadSystemStyles();
 
   public void addPackage(ResourcePackage resourcePackage) {
     this.packageMap.put(resourcePackage.getId(), resourcePackage);
