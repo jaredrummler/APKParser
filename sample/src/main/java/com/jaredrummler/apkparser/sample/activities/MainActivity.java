@@ -35,7 +35,6 @@ import com.jaredrummler.apkparser.sample.util.Helper;
 
 import java.io.IOException;
 import java.text.NumberFormat;
-import java.text.ParseException;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ApkParserSample {
@@ -84,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements ApkParserSample {
         ApkParser parser = ApkParser.create(app);
         try {
           List<DexInfo> dexInfos = parser.getDexInfos();
-          parser.getAndroidManifest().getComponents();
           int methodCount = 0;
           for (DexInfo dexInfo : dexInfos) {
             methodCount += dexInfo.header.methodIdsSize;
@@ -93,8 +91,6 @@ public class MainActivity extends AppCompatActivity implements ApkParserSample {
           toast(message, Toast.LENGTH_SHORT);
         } catch (IOException e) {
           toast(e.getMessage(), Toast.LENGTH_LONG);
-        } catch (ParseException e) {
-          e.printStackTrace();
         } finally {
           parser.close();
         }
