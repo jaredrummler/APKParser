@@ -17,7 +17,10 @@
 
 package com.jaredrummler.apkparser.model;
 
+import org.w3c.dom.NamedNodeMap;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class IntentFilter {
@@ -25,6 +28,7 @@ public class IntentFilter {
   public final List<String> actions = new ArrayList<>();
   public final List<String> categories = new ArrayList<>();
   public final List<IntentData> dataList = new ArrayList<>();
+  public NamedNodeMap attributes;
 
   public static class IntentData {
 

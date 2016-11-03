@@ -60,6 +60,7 @@ public class AndroidManifest {
   private static IntentFilter getIntentFilter(Node intentNode) {
     NodeList intentChildren = intentNode.getChildNodes();
     IntentFilter intentFilter = new IntentFilter();
+    intentFilter.attributes = intentNode.getAttributes();
     for (int j = 0; j < intentChildren.getLength(); j++) {
       Node intentChild = intentChildren.item(j);
       String intentChildName = intentChild.getNodeName();
