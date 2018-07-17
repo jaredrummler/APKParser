@@ -90,6 +90,9 @@ public class ApkMetaTranslator implements XmlStreamer {
             .protectionLevel(attributes.get("android:protectionLevel"))
             .build());
         break;
+      case "meta-data":
+        builder.addMetaData(attributes.get("name"), attributes.get("value"));
+        break;
     }
   }
 

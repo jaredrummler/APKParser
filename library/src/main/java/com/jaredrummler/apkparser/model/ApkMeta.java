@@ -29,7 +29,9 @@
 package com.jaredrummler.apkparser.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ApkMeta {
 
@@ -55,6 +57,7 @@ public class ApkMeta {
   public final List<String> usesPermissions;
   public final List<UseFeature> usesFeatures;
   public final List<Permission> permissions;
+  public final Map<String, String> metaData;
 
   private ApkMeta(Builder builder) {
     this.packageName = builder.packageName;
@@ -74,6 +77,7 @@ public class ApkMeta {
     this.usesPermissions = builder.usesPermissions;
     this.usesFeatures = builder.usesFeatures;
     this.permissions = builder.permissions;
+    this.metaData = builder.metaData;
   }
 
   public static final class Builder {
@@ -95,6 +99,7 @@ public class ApkMeta {
     private List<String> usesPermissions = new ArrayList<>();
     private List<UseFeature> usesFeatures = new ArrayList<>();
     private List<Permission> permissions = new ArrayList<>();
+    private Map<String, String> metaData = new HashMap<>();
 
     private Builder() {
     }
@@ -185,6 +190,13 @@ public class ApkMeta {
 
     public Builder addPermission(Permission permissions) {
       this.permissions.add(permissions);
+      return this;
+    }
+
+    public Builder addMetaData(String key, String value) {
+      if (key != null) {
+          this.metaData.put(key, value);
+      }
       return this;
     }
   }
