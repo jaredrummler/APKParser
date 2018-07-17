@@ -48,7 +48,7 @@ public class AppListAdapter extends BaseAdapter {
   public AppListAdapter(Context context, List<PackageInfo> installedApps) {
     apps = installedApps;
     inflater = LayoutInflater.from(context);
-    picasso = Picasso.with(context);
+    picasso = Picasso.get();
     size = Density.toPx(context, 46);
     pm = context.getPackageManager();
   }
