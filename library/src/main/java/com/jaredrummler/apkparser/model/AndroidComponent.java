@@ -32,6 +32,7 @@ public class AndroidComponent {
     return new Builder(type);
   }
 
+  public final String tagName;
   public final String name;
   public final boolean exported;
   public final String process;
@@ -39,6 +40,7 @@ public class AndroidComponent {
   public final int type;
 
   private AndroidComponent(Builder builder) {
+    this.tagName = builder.tagName;
     this.name = builder.name;
     this.exported = builder.exported;
     this.process = builder.process;
@@ -48,6 +50,7 @@ public class AndroidComponent {
 
   public static final class Builder {
 
+    private String tagName;
     private String name;
     private boolean exported;
     private String process;
@@ -60,6 +63,11 @@ public class AndroidComponent {
 
     public AndroidComponent build() {
       return new AndroidComponent(this);
+    }
+
+    public Builder tagName(String tagName) {
+      this.tagName = tagName;
+      return this;
     }
 
     public Builder name(String name) {

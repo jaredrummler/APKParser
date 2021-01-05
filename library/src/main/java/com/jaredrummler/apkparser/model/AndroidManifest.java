@@ -45,6 +45,7 @@ public class AndroidManifest {
     builder.name(XmlUtils.getAttribute(attributes, "android:name"));
     builder.exported(XmlUtils.getBoolAttribute(attributes, "android:exported", false));
     builder.process(XmlUtils.getAttribute(attributes, "android:process"));
+    builder.tagName(node.getNodeName());
     NodeList children = node.getChildNodes();
     for (int i = 0; i < children.getLength(); i++) {
       Node child = children.item(i);
